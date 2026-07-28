@@ -23,8 +23,7 @@ public class Usuario {
     }
 
     public Usuario(int idUsuario, String nombreCompleto, 
-                   String userName, String email, String clave,
-                   String rol) {
+                   String userName, String email, String clave) {
         this.idUsuario = idUsuario;
         this.nombreCompleto = nombreCompleto;
         this.userName = userName;

@@ -5,6 +5,7 @@
 package com.josuecastro.controller;
 
 import com.josuecastro.conexiondb.Repository;
+import com.josuecastro.conexiondb.UsuarioDAO;
 import com.josuecastro.model.Usuario;
 import com.josuecastro.view.LoginView;
 import javafx.stage.Stage;
@@ -39,7 +40,7 @@ public class LoginController {
         );
     }
 
-    private Repository repositorio = new Repository ();
+   AuthSistema auth = new AuthSistema();
         public void iniciarSecion(){
         String nombreUsuario = this.LOGIN_VIEW.getTxtNombreUsuario().getText().trim();
         String clave = this.LOGIN_VIEW.getPwdClave().getText().trim();
@@ -57,15 +58,17 @@ public class LoginController {
             
         } else{
             this.LOGIN_VIEW.getPwdClave().getStyleClass().remove("empty");
-            Usuario usuario;
-            usuario = repositorio.login(nombreUsuario,clave);
-            if( usuario == null  )
+           Usuario usuario;
+            usuario = auth.login(nombreUsuario, clave);
+            if (usuario == null)
                 JOptionPane.showMessageDialog(null, "VALIDE SUS CREDENCIALES");
-            else
+            else {
+                JOptionPane.showMessageDialog(null, "Sesion iniciada correctamente");
                 SceneManager.getInstanciaSceneManager().ventanaBienvenida();
-        }
+            }
       }
     }
+}
 
    
 

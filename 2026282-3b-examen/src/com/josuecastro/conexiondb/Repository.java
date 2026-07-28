@@ -3,55 +3,77 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.josuecastro.conexiondb;
-import com.josuecastro.model.Usuario;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import javax.swing.JOptionPane;
+
 /**
  *
  * @author informatica
  */
-public class Repository {
-    private static ArrayList<Usuario> listaUsuarios = new ArrayList<>();
-    
-    public void guardarUsuarioDB(int idUsuario, String userName,
-                                String nombreCompleto,
-                                String email,
-                                String clave,
-                                String rol){
-            try{
-                PreparedStatement prepararLlamada = ConexionDB
-                                                        .getInstanciaConexionDatabase()
-                                                        .getInstanciaConnection()
-                                                        .prepareCall("{call sp_create_registro_resultado(?,?,?,?,?,?)}");
-                prepararLlamada.setInt(1, idUsuario);
-               prepararLlamada.setString(2, userName);
-               prepararLlamada.setString(3, nombreCompleto);
-               prepararLlamada.setString(4, email);
-               prepararLlamada.setString(5, clave);
-               prepararLlamada.setString(6, rol);
-               
+import com.josuecastro.conexiondb.ConexionDB;
+import com.josuecastro.model.Usuario;
 
-                prepararLlamada.execute();  
-            } catch(SQLException errorSQL){
-                System.out.println("Error al Guardar el Resultado");
-            } catch(Exception errorPadre){
-                System.out.println("Error top");
-            }
-        }
-    
-        public Usuario login(String userName, String clave){
-        for(Usuario usuarioBuscado : listaUsuarios ){
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class Repository  {
+
+    public Usuario buscarPorCredenciales(String nombreUsuario, String clave) {
+        Usuario usuario = null;
+        
+        String sql = "SELECT * FROM usuario WHERE (nombre_usuario = ? OR email = ?) AND clave = ?";
+        
+        try {
+            Connection conn = ConexionDB.getInstanciaConexionDatabase().getInstanciaConnection();
             
-            if( usuarioBuscado.getUserName().equals(userName)
-                    && usuarioBuscado.getClave().equals(clave)  ){
-                return usuarioBuscado;
+            if (conn == null) {
+                System.out.println("Error: No hay conexión disponible con la base de datos");
+                return null;
             }
+            
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, nombreUsuario);
+            pstmt.setString(2, nombreUsuario);
+            pstmt.setString(3, clave);
+            
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                usuario = new Usuario(
+                    rs.getInt("id_usuario"),
+                    rs.getString("user_name"),
+                    rs.getString("clave"),
+                    rs.getString("nombre_completo"),
+                    rs.getString("email")
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println("Error en repositorio al buscar usuario: " + e.getMessage());
         }
-        return null;
+        return usuario;
     }
-    
-    
-    
+
+    public boolean guardar(String nombreCompleto, String nombreUsuario, String correo, String clave) {
+        String sql = "INSERT INTO usuario (nombre_completo, user_name, email, clave) VALUES (?, ?, ?, ?)";
+        
+        try {
+            Connection conn = ConexionDB.getInstanciaConexionDatabase().getInstanciaConnection();
+            
+            if (conn == null) {
+                System.out.println("Error: La conexión es Null, revisa tus credenciales");
+                return false;
+            }
+                        
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, nombreCompleto);
+            pstmt.setString(2, nombreUsuario);
+            pstmt.setString(3, correo);
+            pstmt.setString(4, clave);
+            
+            pstmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error al registrar en repositorio " + e.getMessage());
+            return false;
+        }
+    }
 }
