@@ -49,14 +49,17 @@ public class LoginView extends BorderPane {
         
         formulario = new GridPane();
         
-        lblNombreUsuario = new Label ("Ingrese su contraseña");
-        txtNombreUsuario = new PasswordField();
-        
+        lblNombreUsuario = new Label("Ingrese su usuario");
+        txtNombreUsuario = new TextField();
+
+        lblClave = new Label("Ingrese su contraseña");
+        pwdClave = new PasswordField();
+
         formulario.add(lblNombreUsuario, 0, 0);
         formulario.add(txtNombreUsuario, 1, 0);
-        
-        formulario.add(lblClave,0,1);
-        formulario.add(pwdClave,1,1);
+
+        formulario.add(lblClave, 0, 1);
+        formulario.add(pwdClave, 1, 1);
         
         btnIniciarSesion = new Button("Inicia Sesion");
         

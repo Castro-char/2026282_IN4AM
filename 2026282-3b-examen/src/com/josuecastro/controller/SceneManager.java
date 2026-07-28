@@ -49,7 +49,7 @@ public class SceneManager {
         try {
             this.escenarioPrincipal.initStyle(StageStyle.TRANSPARENT);
             LoginView login = LoginView.getInstanciaLoginView();
-            cambiarEscenaPrincipal(login.getCajaVertical(), 450, 500);
+            cambiarEscenaPrincipal(login, 450, 500);
             this.escenaPrincipal.setFill(Color.TRANSPARENT);
             new LoginController(login);
         } catch (NullPointerException objetoNulo) {
